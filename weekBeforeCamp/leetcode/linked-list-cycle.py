@@ -6,10 +6,6 @@
 
 class Solution(object):
     def hasCycle(self, head):
-        """
-        :type head: ListNode
-        :rtype: bool
-        """
         fast = head
         while fast and fast.next:
             head = head.next
