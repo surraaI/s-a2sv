@@ -1,9 +1,20 @@
 class Solution:
-    def findMaximumXOR(self, nums: List[int]) -> int:
-        ans = 0
-        for i in range(32)[::-1]:
-         
-            ans <<= 1
-            prefixes = {num >> i for num in nums}
-            ans += any(ans^1 ^ p in prefixes for p in prefixes)
-        return ans
+    def findMaximumXOR(self, nums):    
+        max_xor = 0
+        mask = 0
+        
+        for i in range(31, -1, -1): 
+            mask |= (1 << i)
+            found_prefixes = set()
+            
+            for num in nums:
+                found_prefixes.add(num & mask)
+            
+            temp = max_xor | (1 << i)
+            for prefix in found_prefixes:
+                if (prefix ^ temp) in found_prefixes:
+                    max_xor = temp
+                    break
+        
+        return max_xor
+
