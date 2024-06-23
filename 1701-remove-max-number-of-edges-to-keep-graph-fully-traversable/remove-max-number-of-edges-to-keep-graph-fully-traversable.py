@@ -10,25 +10,24 @@ class DSU:
     
     def union(self, x, y):
         px, py = self.find(x), self.find(y)
-        if self.rank[px] > self.rank[py]: # py to px
+        if self.rank[px] > self.rank[py]: 
             self.par[py] = px
             self.rank[px] += self.rank[py]
-        else: # px to py
+        else: 
             self.par[px] = py
             self.rank[py] += self.rank[px]
 
 class Solution:
     def maxNumEdgesToRemove(self, n: int, edges: List[List[int]]) -> int:
-        import collections
+        
         type2edge = collections.defaultdict(list)
         for ty, u, v in edges:
             type2edge[ty].append([u, v])
         
         ans = 0
 
-        # alice
         dsua = DSU(n+1)
-        for u, v in type2edge[3]: # join common
+        for u, v in type2edge[3]: 
             if dsua.find(u) == dsua.find(v):
                 ans += 1
             else:
@@ -41,10 +40,9 @@ class Solution:
         
         for i in range(n):
             dsua.find(i)
-        if len(set(dsua.par[1:])) > 1: # diff groups
+        if len(set(dsua.par[1:])) > 1: 
             return -1
         
-        # bob
         dsub = DSU(n+1)
         for u, v in type2edge[3]:
             if dsub.find(u) != dsub.find(v):
