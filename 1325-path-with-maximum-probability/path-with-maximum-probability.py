@@ -1,23 +1,28 @@
 class Solution:
     def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start_node: int, end_node: int) -> float:
         graph = defaultdict(list)
+        for i, (a, b) in enumerate(edges):
+            graph[a].append((b, succProb[i]))
+            graph[b].append((a, succProb[i]))
 
-        for i in range(len(edges)):
-            graph[edges[i][0]].append((edges[i][1], succProb[i]))
-            graph[edges[i][1]].append((edges[i][0], succProb[i]))
+        
+        pq = [(-1, start_node)]  
+        maxProb = [0] * n
+        maxProb[start_node] = 1
 
+        
+        while pq:
+            currProb, node = heapq.heappop(pq)
+            currProb = -currProb  
 
-        heap = [[start_node,-1]]
-        chances = {i:0 for i in range(n)}
-        chances[start_node] = 1
+            if node == end_node:
+                return currProb 
 
-        while heap:
-            curr, prob = heapq.heappop(heap)
-            prob *= -1
+          
+            for neighbor, edgeProb in graph[node]:
+                newProb = currProb * edgeProb
+                if newProb > maxProb[neighbor]:
+                    maxProb[neighbor] = newProb
+                    heapq.heappush(pq, (-newProb, neighbor))
 
-            for child, cprob in graph[curr]:
-                if prob * cprob > chances[child]:
-                    chances[child] = prob * cprob
-                    heapq.heappush(heap, (child, -chances[child]))
-      
-        return chances[end_node]
+        return 0.0
