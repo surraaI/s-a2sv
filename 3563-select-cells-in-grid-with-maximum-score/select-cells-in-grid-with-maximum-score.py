@@ -1,24 +1,28 @@
 class Solution:
     def maxScore(self, grid: List[List[int]]) -> int:
-        m, n = len(grid), len(grid[0])
-        
-        @functools.cache
-        def dfs(val, rows_seen_mask):
-            if val > 100:
+        rows = len(grid)
+        for i in range(rows):
+            grid[i].sort()
+
+        @cache
+        def f(mask, M):
+            if mask == 0:
                 return 0
-
-            best = 0
-            best = max(best, dfs(val + 1, rows_seen_mask))
-
-            for i in range(m):
-                mask = 1 << i 
-                if rows_seen_mask & mask:  
+            ans = 0
+            candidates = []
+            for i in range(rows):
+                if mask & (1 << i):
+                    j = bisect.bisect_right(grid[i], M) - 1
+                    if j >= 0:
+                        candidates.append((grid[i][j], i))
+            if not candidates:
+                return 0
+            maximumValue = max(candidates)[0]
+            for v, i in candidates:
+                if v != maximumValue:
                     continue
-                for j in range(n):
-                    if val != grid[i][j]:
-                        continue
-                    new_mask = rows_seen_mask | mask  
-                    best = max(best, val + dfs(val + 1, new_mask))
-            return best
+                ans = max(ans, f(mask - (1 << i), v - 1) + v)
+            return ans
 
-        return dfs(1, 0)  
+        ans = f((1 << rows) - 1, 100)
+        return ans
