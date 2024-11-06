@@ -1,24 +1,44 @@
 class Solution:
     def expressiveWords(self, s: str, words: List[str]) -> int:
-        def group(word):
-            return [(char, len(list(grp))) for char, grp in groupby(word)]
+        ans = 0
+        def groupify(w):
+            groups = []
+            i = 0
+            n = len(w)
+
+            while i < n:
+                curr = w[i]
+                j =i
+                while j < n and w[j] == curr:
+                    j += 1
+                groups.append((curr, j - i))
+                i = j
+            return groups
         
-        s_groups = group(s)
-        stretchy_count = 0
-
-        for word in words:
-            word_groups = group(word)
-
-            if len(s_groups) != len(word_groups):
-                continue 
+        g = groupify(s)
+        for w in words:
+            curr = groupify(w)
+            if len(curr) != len(g):
+                continue
             
-            stretchy = True
-            for (sc, sl), (wc, wl) in zip(s_groups, word_groups):
-                if sc != wc or (sl < 3 and sl != wl) or (sl >= 3 and wl > sl):
-                    stretchy = False
-                    break
+            flag = True
+            for j in range(len(curr)):
+                if g[j][0] != curr[j][0]:
+                    flag = False
+                    continue
+                if g[j][1] <= 2:
+                    if curr[j][1] != g[j][1]:
+                        flag = False
+                elif g[j][0] == curr[j][0] and g[j][1] < curr[j][1]:
+                    flag = False
+                
+            if flag:
+                ans += 1
 
-            if stretchy:
-                stretchy_count += 1
+        return ans
+                
+                 
 
-        return stretchy_count
+
+        return 0
+
